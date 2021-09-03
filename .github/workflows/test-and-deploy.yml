@@ -165,27 +165,27 @@ jobs:
             repository: E2E-Orchestration/Tests
             path: main
         
-        - name: Setup .NET Core SDK
-          uses: actions/setup-dotnet@v1.8.1
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1.8.1
 
-        - name: setup Playwright
-          run: |
-            dotnet tool install --global Microsoft.Playwright.CLI
-            dotnet build
-            playwright install
+      - name: setup Playwright
+        run: |
+          dotnet tool install --global Microsoft.Playwright.CLI
+          dotnet build
+          playwright install
 
-        - name: run tests
-          env:
-            TestConfig__BaseUrl: https://gray-sand-0f71fae00.azurestaticapps.net
-          run: dotnet test --configuration Release --logger "trx;LogFileName=test-results.trx"
+      - name: run tests
+        env:
+          TestConfig__BaseUrl: https://gray-sand-0f71fae00.azurestaticapps.net
+        run: dotnet test --configuration Release --logger "trx;LogFileName=test-results.trx"
 
-        - name: Test Report
-          uses: dorny/test-reporter@v1
-          if: success() || failure()
-          with:
-            name: Tests Results
-            path: "**/*.trx"
-            reporter: dotnet-trx
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Tests Results
+          path: "**/*.trx"
+          reporter: dotnet-trx
 
   deploy_service_one_prod:
     runs-on: ubuntu-latest
