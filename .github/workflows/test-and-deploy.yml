@@ -122,7 +122,6 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: 'service-two'
-        slot-name: 'production'
         publish-profile: ${{ secrets.AZURE_CREDENTIALS_SERVICE_TWO }}
         package: .
   
@@ -250,7 +249,6 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: 'service-two'
-        slot-name: 'production'
         publish-profile: ${{ secrets.AZURE_CREDENTIALS_SERVICE_TWO_PROD }}
         package: .
   
