@@ -158,12 +158,10 @@ jobs:
       - build_deploy_service_two_e2e
       - build_deploy_ui_e2e
     steps:
-      runs-on: ubuntu-latest
-
       - uses: actions/checkout@v2
-          with:
-            repository: E2E-Orchestration/Tests
-            path: main
+        with:
+          repository: E2E-Orchestration/Tests
+          path: main
         
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v1.8.1
