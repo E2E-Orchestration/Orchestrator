@@ -247,32 +247,31 @@ jobs:
         publish-profile: ${{ secrets.AZURE_CREDENTIALS_SERVICE_TWO_PROD }}
         package: .
   
-  build_deploy_ui:
+  build_deploy_ui_prod:
     runs-on: ubuntu-latest
     name: Build and Deploy UI to Prod
     steps:
-      steps:
-        - uses: actions/checkout@v2
-          with:
-            repository: E2E-Orchestration/UI
-            path: main
+      - uses: actions/checkout@v2
+        with:
+          repository: E2E-Orchestration/UI
+          path: main
 
-        - uses: microsoft/variable-substitution@v1 
-          with:
-              files: './src/wwwroot/appsettings.json'
-          env:
-              ApiConfig.ApiUri: https://service-one-prod.azurewebsites.net/api/
+      - uses: microsoft/variable-substitution@v1 
+        with:
+            files: './src/wwwroot/appsettings.json'
+        env:
+            ApiConfig.ApiUri: https://service-one-prod.azurewebsites.net/api/
 
-        - name: Build And Deploy
-          id: builddeploy
-          uses: Azure/static-web-apps-deploy@v1
-          with:
-            azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PROD }}
-            repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
-            action: "upload"
-            ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-            # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-            app_location: "src" # App source code path
-            output_location: "wwwroot" # Built app content directory - optional
-            ###### End of Repository/Build Configurations ######
+      - name: Build And Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PROD }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          action: "upload"
+          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
+          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
+          app_location: "src" # App source code path
+          output_location: "wwwroot" # Built app content directory - optional
+          ###### End of Repository/Build Configurations ######
   
