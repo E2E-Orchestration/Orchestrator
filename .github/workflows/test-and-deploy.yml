@@ -127,9 +127,9 @@ jobs:
     name: Build and Deploy UI to E2E
     steps:
       - uses: actions/checkout@v2
-          with:
-            repository: E2E-Orchestration/UI
-            path: main
+        with:
+          repository: E2E-Orchestration/UI
+          path: main
 
         - uses: microsoft/variable-substitution@v1 
           with:
