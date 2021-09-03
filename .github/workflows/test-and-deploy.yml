@@ -128,8 +128,7 @@ jobs:
     steps:
       runs-on: ubuntu-latest
       name: Build and Deploy UI to E2E
-      steps:
-        - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
           with:
             repository: E2E-Orchestration/UI
             path: main
@@ -163,8 +162,7 @@ jobs:
     steps:
       runs-on: ubuntu-latest
 
-      steps:
-        - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
           with:
             repository: E2E-Orchestration/Tests
             path: main
