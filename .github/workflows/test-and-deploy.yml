@@ -50,7 +50,7 @@ jobs:
 
     - uses: azure/webapps-deploy@v2
       with:
-        app-name: 'service-one'
+        app-name: 'service-one-e2e'
         publish-profile: ${{ secrets.AZURE_CREDENTIALS_SERVICE_ONE }}
         package: .
     
@@ -214,7 +214,7 @@ jobs:
     
     - uses: azure/appservice-settings@v1
       with:
-        app-name: 'service-one'
+        app-name: 'service-one-prod'
         mask-inputs: false
         app-settings-json: |
           [
