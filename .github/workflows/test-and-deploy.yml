@@ -1,0 +1,133 @@
+name: End to End Test and Deployment
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  build_service_one:
+    runs-on: ubuntu-latest
+    name: Build Service One
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: E2E-Orchestration/Service-One
+          path: main
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
+          include-prerelease: true
+
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
+
+      - name: dotnet publish
+        run: dotnet publish -c Release src/Service-One.Web -o ${{env.DOTNET_ROOT}}/service-one
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v2
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/service-one
+
+  deploy_service_one_e2e:
+    runs-on: ubuntu-latest
+    needs: build_service_one
+    name: Deploy Service One to E2E environment
+    steps:
+      environment:
+      name: 'test'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - uses: actions/download-artifact@v2
+      with:
+        name: .net-app
+
+    - uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'service-one'
+        publish-profile: ${{ secrets.AZURE_CREDENTIALS_SERVICE_ONE }}
+        package: .
+    
+    - uses: azure/login@v1
+      with:
+        creds: '${{ secrets.AZ_LOGIN_SERVICE_ONE }}'
+    
+    - uses: azure/appservice-settings@v1
+      with:
+        app-name: 'service-one'
+        mask-inputs: false
+        app-settings-json: |
+          [
+            {
+              "name": "ServiceTwoUrl",
+              "value": "https://service-two-e2e.azurewebsites.net/api/",
+              "slotSetting": false
+            }
+          ]
+    
+    - run: |
+        az logout
+
+  build_service_two:
+    runs-on: ubuntu-latest
+    name: Build Service Two
+    steps:
+      TODO
+
+  deploy_service_two_e2e:
+    runs-on: ubuntu-latest
+    name: Deploy Service Two to E2E environment
+    steps:
+      TODO
+  
+  build_u:
+    runs-on: ubuntu-latest
+    name: Build UI
+    steps:
+      TODO
+
+  deploy_ui_e2e:
+    runs-on: ubuntu-latest
+    name: Deploy UI to E2E environment
+    steps:
+      TODO
+
+  e2e_tests:
+    runs-on: ubuntu-latest
+    name: Run full end to end regression tests
+    needs:
+      - build_deploy_service_one_e2e
+      - build_deploy_service_two_e2e
+      - build_deploy_ui_e2e
+    steps:
+      TODO
+
+build_deploy_service_one_prod:
+    runs-on: ubuntu-latest
+    name: Build and deploy Service One to E2E environment
+    needs:
+      - e2e_tests
+    steps:
+      TODO
+
+  build_deploy_service_two_prod:
+    runs-on: ubuntu-latest
+    name: Build and deploy Service Two to E2E environment
+    needs:
+      - e2e_tests
+    steps:
+      TODO
+  
+  build_deploy_ui_prod:
+    runs-on: ubuntu-latest
+    name: Build and deploy UI to E2E environment
+    needs:
+      - e2e_tests
+    steps:
+      TODO
+  
