@@ -102,7 +102,7 @@ jobs:
   deploy_service_two_e2e:
     runs-on: ubuntu-latest
     name: Deploy Service Two
-    needs: build
+    needs: build_service_two
     environment:
       name: 'test'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
@@ -154,8 +154,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Run full end to end regression tests
     needs:
-      - build_deploy_service_one_e2e
-      - build_deploy_service_two_e2e
+      - deploy_service_one_e2e
+      - deploy_service_two_e2e
       - build_deploy_ui_e2e
     steps:
       - uses: actions/checkout@v2
@@ -227,7 +227,7 @@ jobs:
   deploy_service_two_prod:
     runs-on: ubuntu-latest
     name: Deploy Service Two to Production
-    needs: build
+    needs: build_service_two
     environment:
       name: 'prod'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
