@@ -163,7 +163,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: E2E-Orchestration/Tests
-          path: main
         
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v1.8.1
