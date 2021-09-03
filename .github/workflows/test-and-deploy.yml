@@ -234,7 +234,7 @@ jobs:
       - build_service_two
       - e2e_tests
     environment:
-      name: 'prod'
+      name: 'production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
