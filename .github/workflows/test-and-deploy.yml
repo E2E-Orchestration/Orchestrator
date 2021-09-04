@@ -175,7 +175,7 @@ jobs:
 
       - name: run tests
         env:
-          TestConfig__BaseUrl: https://gray-sand-0f71fae00.azurestaticapps.net
+          TestConfig__BaseUrl: https://e2e-test.goforgoldman.com
         run: dotnet test --configuration Release --logger "trx;LogFileName=test-results.trx"
 
       - name: Test Report
