@@ -9,6 +9,7 @@ This repo contains the workflows that automate deplotment of the test environmen
 ## See the SSW Rules
 
 [Do you follow BDD?](https://www.ssw.com.au/rules/bdd)
+
 [Do you automate UI tests?](https://www.ssw.com.au/rules/automated-ui-testing)
 
 ## Check the other repos in this organisation
