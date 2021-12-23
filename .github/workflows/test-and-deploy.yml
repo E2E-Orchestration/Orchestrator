@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: '0 0 * * *'
 
+env:
+  BUILD_CONFIGURATION: Release
+
 jobs:
   build_service_one:
     runs-on: ubuntu-latest
@@ -23,11 +26,11 @@ jobs:
 
       - name: Build with dotnet
         working-directory: ./service-one
-        run: dotnet build --configuration Release
+        run: dotnet build -c ${{env.BUILD_CONFIGURATION}}
 
       - name: dotnet publish
         working-directory: ./service-one
-        run: dotnet publish -c Release src/Service-One.Web -o ${{env.DOTNET_ROOT}}/service-one
+        run: dotnet publish -c ${{env.BUILD_CONFIGURATION}} src/Service-One.Web -o ${{env.DOTNET_ROOT}}/service-one
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
@@ -74,6 +77,20 @@ jobs:
     - run: |
         az logout
 
+    - name: Health Check
+      uses: jtalk/url-health-check-action@v2
+      with:
+        # Check the following URLs one by one sequentially
+        url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}/healthcheck
+        # Follow redirects, or just report success on 3xx status codes
+        follow-redirect: true
+        # Fail this action after this many failed attempts
+        max-attempts: 3 # Optional, defaults to 1
+        # Delay between retries
+        retry-delay: 5s # Optional, only applicable to max-attempts > 1
+        # Retry all errors, including 404. This option might trigger curl upgrade.
+        retry-all: false # Optional, defaults to "false"
+
   build_service_two:
     runs-on: ubuntu-latest
     name: Build Service Two
@@ -91,11 +108,11 @@ jobs:
 
       - name: Build with dotnet
         working-directory: ./service-two
-        run: dotnet build --configuration Release
+        run: dotnet build -c ${{env.BUILD_CONFIGURATION}}
 
       - name: dotnet publish
         working-directory: ./service-two
-        run: dotnet publish -c Release src/Service-Two.Web -o ${{env.DOTNET_ROOT}}/service-two
+        run: dotnet publish -c ${{env.BUILD_CONFIGURATION}} src/Service-Two.Web -o ${{env.DOTNET_ROOT}}/service-two
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
@@ -124,7 +141,21 @@ jobs:
         app-name: 'service-two-e2e'
         publish-profile: ${{ secrets.AZURE_CREDENTIALS_SERVICE_TWO }}
         package: .
-  
+
+    - name: Health Check
+      uses: jtalk/url-health-check-action@v2
+      with:
+        # Check the following URLs one by one sequentially
+        url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}/healthcheck
+        # Follow redirects, or just report success on 3xx status codes
+        follow-redirect: true
+        # Fail this action after this many failed attempts
+        max-attempts: 3 # Optional, defaults to 1
+        # Delay between retries
+        retry-delay: 5s # Optional, only applicable to max-attempts > 1
+        # Retry all errors, including 404. This option might trigger curl upgrade.
+        retry-all: false # Optional, defaults to "false"
+
   build_deploy_ui_e2e:
     runs-on: ubuntu-latest
     name: Build and Deploy UI to E2E
@@ -170,13 +201,13 @@ jobs:
       - name: setup Playwright
         run: |
           dotnet tool install --global Microsoft.Playwright.CLI
-          dotnet build
+          dotnet build -c ${{env.BUILD_CONFIGURATION}}
           playwright install
 
       - name: run tests
         env:
           TestConfig__BaseUrl: https://e2e-test.goforgoldman.com
-        run: dotnet test --configuration Release --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test -c ${{env.BUILD_CONFIGURATION}} --no-build --logger "trx;LogFileName=test-results.trx"
 
       - name: Test Report
         uses: dorny/test-reporter@v1
